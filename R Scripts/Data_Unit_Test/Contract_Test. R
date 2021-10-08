@@ -1,8 +1,5 @@
-#
-# Data Unit Testing for contract data 
-#
-
 contracts <- readr::read_csv("https://raw.githubusercontent.com/rymarinelli/Extend-Analysis/main/data/contracts.csv")
+contracts <- contracts %>% subset(line_item_id != "NULL")
 
 test_that("Testing For NA in Contracts", {
   
@@ -35,5 +32,11 @@ test_that("Testing for NULL values in store id", {
 
 test_that("Testing for NULL values in plan id", {
   id = contracts %>% subset(plan_id == "NULL") %>% dim()
+  expect_equal(0, id[1])
+})
+
+#Failed, corrected with pre-processing 
+test_that("Testing for NULL values in line_item", {
+  id = contracts %>% subset(line_item_id == "NULL") %>% dim()
   expect_equal(0, id[1])
 })
