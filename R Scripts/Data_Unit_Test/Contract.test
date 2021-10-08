@@ -1,0 +1,35 @@
+contracts <- readr::read_csv("https://raw.githubusercontent.com/rymarinelli/Extend-Analysis/main/data/contracts.csv")
+
+test_that("Testing For NA in Contracts", {
+  
+  expect_equal(contracts %>% dim(),  contracts %>% na.omit() %>% dim())
+  
+})
+
+test_that("Testing For Duplicates in Contracts", {
+  
+  expect_equal(contracts %>% dim(), contracts[!duplicated(contracts),] %>% dim())
+  
+})
+
+
+test_that("Testing That Prices Are None Zero", {
+  
+  expect_equal(contracts %>% subset(contracts$plan_purchase_price > 0) %>% dim(), contracts %>% dim())
+})
+
+test_that("Testing for NULL values in contract_ID", {
+  id = contracts %>% subset(contract_id == "NULL") %>% dim()
+  expect_equal(0, id[1])
+})
+
+test_that("Testing for NULL values in store id", {
+  id = contracts %>% subset(store_id == "NULL") %>% dim()
+  expect_equal(0, id[1])
+})
+
+
+test_that("Testing for NULL values in plan id", {
+  id = contracts %>% subset(plan_id == "NULL") %>% dim()
+  expect_equal(0, id[1])
+})
