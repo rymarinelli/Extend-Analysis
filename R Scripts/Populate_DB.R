@@ -1,8 +1,9 @@
-# dbAppendTable(con, "DIM_CONTRACTS_TRANSACTION" , DIM_CONTRACTS_TRANSACTION)
-# 
-# dbReadTable(con, "DIM_CONTRACTS_TRANSACTION")
+#
+# Script adds cleaned data to the database 
+#
 
 
+source("Segment_DataFrames.R")
 
 dbAppendTable(con, "DIM_MERCH" , DIM_MERCH)
 dbReadTable(con, "DIM_MERCH")
