@@ -1,3 +1,7 @@
+#
+# Data Unit Testing for contract data 
+#
+
 contracts <- readr::read_csv("https://raw.githubusercontent.com/rymarinelli/Extend-Analysis/main/data/contracts.csv")
 
 test_that("Testing For NA in Contracts", {
