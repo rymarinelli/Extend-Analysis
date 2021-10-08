@@ -21,13 +21,14 @@ create_DIM_MERCH <- "CREATE TABLE DIM_MERCH (
   createdat DATETIME,
   enabled BOOLEAN,
   merchantcut DOUBLE,
-  storetype TEXT
+  storetype TEXT,
+  approved BOOLEAN
 );"
 
 create_DIM_PRODUCT_TRANSACTION <- 
 "CREATE TABLE DIM_PRODUCT_TRANSACTION
 (
-  store_id TEXT NOT NULL UNIQUE,
+  store_id TEXT NOT NULL,
   category TEXT,
   price DOUBLE
 );"
@@ -35,7 +36,7 @@ create_DIM_PRODUCT_TRANSACTION <-
 CREATE_DIM_PRODUCT_STATUS <- " 
 CREATE TABLE DIM_PRODUCT_STATUS
 (
-  store_id TEXT NOT NULL UNIQUE,
+  store_id TEXT NOT NULL,
   warranty_status TEXT,
   enabled BOOLEAN,
   approved BOOLEAN
@@ -46,7 +47,7 @@ CREATE_DIM_ORDER_LINE_TRANSACTION <-
   "CREATE TABLE DIM_ORDER_LINE_TRANSACTION
   (
   line_item_id TEXT NOT NULL UNIQUE,
-  quanity INTEGER,
+  quantity INTEGER,
   price DOUBLE ,
   product_purchase_price DOUBLE, 
   discount_per_item DOUBLE 
@@ -62,8 +63,8 @@ CREATE_DIM_ORDER_LINE_STATUS <- "CREATE TABLE DIM_ORDER_LINE_STATUS
 
 CREATE_DIM_ORDER_SHIPPING <- "CREATE TABLE DIM_ORDER_SHIPPING
    (
-      order_id TEXT NOT NULL UNIQUE,
-      app_id TEXT NOT NULL UNIQUE,
+      order_id TEXT NOT NULL,
+      app_id TEXT NOT NULL ,
       source_name TEXT,
       ordered_at DATETIME,
       shipping_country TEXT
@@ -72,8 +73,8 @@ CREATE_DIM_ORDER_SHIPPING <- "CREATE TABLE DIM_ORDER_SHIPPING
 
 CREATE_DIM_ORDER_TRANSACTION <- "CREATE TABLE DIM_ORDER_TRANSACTION
   (
-     app_id TEXT NOT NULL UNIQUE,
-     ordered_at DATETIME,
+     app_id TEXT NOT NULL,
+     order_id TEXT NOT NULL,
      total_price DOUBLE,
      subtotal_price DOUBLE,
      total_discount DOUBLE
@@ -81,18 +82,18 @@ CREATE_DIM_ORDER_TRANSACTION <- "CREATE TABLE DIM_ORDER_TRANSACTION
 
 CREATE_DIM_CONTRACTS_TRANSACTION <- "CREATE TABLE DIM_CONTRACTS_TRANSACTION
 (
-  contract_id TEXT NOT NULL UNIQUE,
-  plan_id TEXT NOT NULL UNIQUE,
+  contract_id TEXT NOT NULL,
+  plan_id TEXT NOT NULL,
   ordered_at DATETIME,
-  plan_purchased_price DOUBLE
+  plan_purchase_price DOUBLE
 
 );"
 
 CREATE_DIM_CONTRACTS_STATUS <- "CREATE TABLE DIM_CONTRACTS_STATUS
 (
   contract_id TEXT NOT NULL UNIQUE,
-  plan_id TEXT NOT NULL UNIQUE,
-  is_funded BOOLEAN,
+  plan_id TEXT NOT NULL,
+  is_refunded BOOLEAN,
   contract_length_years DOUBLE
 )"
 
@@ -109,3 +110,4 @@ for(i in 1:length(tables))
 }
 
 dbListTables(con)
+
