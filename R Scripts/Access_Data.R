@@ -1,4 +1,3 @@
-
 library(magrittr)
 library(glue)
 library(readr)
@@ -29,9 +28,8 @@ access_data <- function(x)
   else if ("{file}" %>% glue() == "order_lines")
   {
     order_lines <- readr::read_csv("https://raw.githubusercontent.com/rymarinelli/Extend-Analysis/main/data/order_lines.csv" %>% glue(), 
-                                   , col_types = cols( variant_id = col_character()))
+                                   col_types = cols( variant_id = col_character()))
     order_lines <- order_lines %>% subset(price > 0 & variant_id != "NULL" & is_warrantable != "NULL")
-    
     
     return(order_lines)
   }
@@ -43,7 +41,7 @@ access_data <- function(x)
     return (orders)
   }
   
-else{
+  else{
     file = "products"
     products <- readr::read_csv("https://raw.githubusercontent.com/rymarinelli/Extend-Analysis/main/data/{file}.csv" %>% glue(), col_types = cols(variant_id = col_character()   ))
     products <- products %>% na.omit() %>% distinct()
@@ -55,6 +53,11 @@ else{
     return(products)
     
   }
-   
-   
+  
 }
+
+contracts <- access_data("contracts")
+merchants <- access_data("merchants")
+order_lines <- access_data("order_lines")
+orders <- access_data("orders")
+products <- access_data("products")
