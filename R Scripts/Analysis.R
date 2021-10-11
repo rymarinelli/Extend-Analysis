@@ -312,9 +312,15 @@ analysis_df <- fastDummies::dummy_cols(analysis_df, select_columns = "storetype"
 model.1 <- lm(warranty_sale_made ~ storetype + merchantcut, data = analysis_df)
 summary(model)
 
+#Calculates Variance Inflation Factor for Multicolinearity 
+Vif.1 <- car::vif(model.1)
 
 model.2 <- lm(warranty_sale_made ~ storetype + merchantcut + product_purchase_price, data = analysis_df)
 summary(model.2)
+
+#Calculates Variance Inflation Factor for Multicolinearity 
+vif.2 <- car::vif(model.2)
+
 
 table <- broom::tidy(model.2) %>% gt::gt()
 
