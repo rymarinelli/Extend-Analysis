@@ -1,7 +1,7 @@
 <h2>Intro </h2>
 This repo is to perform analysis on finanical data 
 
-<h2> Question Ansewers </h2>
+<h2> Question Answers </h2>
 Contains responses to questions per the excerise in word, powerpoint, and pdf format 
 
 <h2> R Scripts </h2>
