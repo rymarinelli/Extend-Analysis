@@ -1,3 +1,12 @@
+
+#Install packages if not installed 
+pkg <- c("car","tidyverse", "lubridate", "gt", "glue", "broom", "scales")
+new.pkg <- pkg[!(pkg %in% installed.packages())]
+if (length(new.pkg)) {
+  install.packages(new.pkg,dependencies=T)
+}
+
+library(car)
 library(tidyverse)
 library(lubridate)
 library(gt)
