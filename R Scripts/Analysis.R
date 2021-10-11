@@ -178,7 +178,31 @@ refurb_2 <- refurb_2 %>% gt::gt()
 #Uses attachment_Rate_By_Month_copy 
 #Uses quant_missed_df_copy
 
+#
+#
+# @param filter - to filter out ids or not 
+# @param col_name to segment by to convert to discrete 
+# @param Plot_title - ggtitle wrapper
+# @param yaxis label is for the x axis is the coords are flipped for readability of the graph 
+# @param xaxis label is for y the y axis  is the coords are flipped for readability of the graph 
 
+plot_maker <- function(filter, agg_func, col_name, plot_title,  ylab_title, xlab_title)
+{
+  globalenv()
+  df <- analysis_df %>% subset(analysis_df$warranty_sale_made == filter)
+  Total_Spend_By_Cat <- aggregate(df$product_purchase_price, list(df$storetype), agg_func)
+  colnames(Total_Spend_By_Cat) <- c("Category", col_name)
+  
+  Total_Spend_By_Cat[,2] <-  as.integer(Total_Spend_By_Cat[,2])
+  
+  p <- ggplot(data=Total_Spend_By_Cat, aes(x= Category, y= Total_Spend_By_Cat[,2] , color = Category, fill = Category)) +
+    geom_bar(stat="identity") + coord_flip() + theme(legend.background = element_rect(fill="lightblue",
+                                                                                      size=0.2, linetype="solid", 
+                                                                                      colour ="darkblue")) + ggtitle(plot_title) + scale_y_continuous(labels = comma)
+  q <- p + ylab(xlab_title) + xlab(ylab_title)
+  
+  return(q) 
+}
 
 
 #Mean Monthly Attachment Rate By Merchant 
@@ -192,51 +216,21 @@ analysis_df <- analysis_df %>% subset(analysis_df$warranty_sale_made %>% is.na()
 
 # Look at the size of the markets in dollars per store type
 
-#Sum of Sales With Warranty
-warranty_analysis <- analysis_df %>% subset(analysis_df$warranty_sale_made == T)
-Total_Spend_By_Cat <- aggregate(warranty_analysis$product_purchase_price, list(warranty_analysis$storetype), sum)
-colnames(Total_Spend_By_Cat) <- c("Category", "Sum of Produce Purchases")
-Total_Spend_By_Cat$`Sum of Produce Purchases` <- Total_Spend_By_Cat$`Sum of Produce Purchases` %>% as.integer()
+
+#Total Product Price With Waranty
+product_purchases_warranty_plot <- plot_maker(T,sum, "Sum of Purchases", "Sum of Product Purchases That Have Warranties",  "Category", "Total of Prices in USD")
+
+#Total Product Price Without Waranty
+product_purchases_plot_no_warranty <- plot_maker(F , sum, "Sum of Purchases", "Sum of Product Purchases That Have Warranties",  "Category", "Total of Prices in USD" )
 
 
-#Making Plot 
-product_purchases_warranty_plot <- ggplot(data=Total_Spend_By_Cat, aes(x= Category, y=`Sum of Produce Purchases`, color = Category, fill = Category)) +
-  geom_bar(stat="identity") + coord_flip() + theme(legend.background = element_rect(fill="lightblue",
-                                                                                    size=0.2, linetype="solid", 
-                                                                                    colour ="darkblue")) + ggtitle("Sum of Product Purchases That Have Warranties") + scale_y_continuous(labels = comma)
-
-
-#Sum of Sales With No Warranty 
-no_warranty_analysis <- analysis_df %>% subset(analysis_df$warranty_sale_made == F)
-Total_Spend_By_Cat <- aggregate(no_warranty_analysis$product_purchase_price, list(no_warranty_analysis$storetype), sum)
-colnames(Total_Spend_By_Cat) <- c("Category", "Sum of Produce Purchases")
-Total_Spend_By_Cat$`Sum of Produce Purchases` <- Total_Spend_By_Cat$`Sum of Produce Purchases` %>% as.integer()
-
-product_purchases <- ggplot(data=Total_Spend_By_Cat, aes(x= Category, y=`Sum of Produce Purchases`, color = Category, fill = Category)) +
-  geom_bar(stat="identity") + coord_flip() + theme(legend.background = element_rect(fill="lightblue",
-                                                                                    size=0.2, linetype="solid", 
-                                                                                    colour ="darkblue")) + ggtitle("Sum of Product Purchases That That Have No Warranties") + scale_y_continuous(labels = comma)
-product_purchases_plot_no_warranty <- product_purchases + ylab("Total of Prices in USD")
-
-
-# Product Price Sum By Store Type 
-Total_Spend_By_Cat <- aggregate(analysis_df$product_purchase_price, list(analysis_df$storetype), sum)
-colnames(Total_Spend_By_Cat) <- c("Category", "Sum of Produce Purchases")
-Total_Spend_By_Cat$`Sum of Produce Purchases` <- Total_Spend_By_Cat$`Sum of Produce Purchases` %>% as.integer()
-
-product_purchases <- ggplot(data=Total_Spend_By_Cat, aes(x= Category, y=`Sum of Produce Purchases`, color = Category, fill = Category)) +
-  geom_bar(stat="identity") + coord_flip() + theme(legend.background = element_rect(fill="lightblue",
-                                                                                    size=0.2, linetype="solid", 
-                                                                                    colour ="darkblue")) + ggtitle("Total Sum of Product Purchases") + scale_y_continuous(labels = comma)
-total_product_purchases_plot <- product_purchases + ylab("Total of Prices in USD")
-
+# Total Product Price Throughout
+total_product_purchases_plot <- plot_maker(T|F,sum, "Sum of Purchases", "Sum of Product Purchases That Have Warranties",  "Category", "Total of Prices in USD")
 
 
 
 # Patchwork Plot that composes the plots 
 product_plot <- (product_purchases_warranty_plot | product_purchases_plot_no_warranty)
-
-
 
 
 
@@ -273,13 +267,13 @@ Total_Spend_By_Cat$`Sum of Produce Purchases` <- Total_Spend_By_Cat$`Revenue Aft
 
 
 #Plotting After Merchant Cut
-product_purchases <- ggplot(data=Total_Spend_By_Cat, aes(x= Category, y=`Revenue After Merchant Cut`, color = Category, fill = Category)) +
+p <- ggplot(data=Total_Spend_By_Cat, aes(x= Category, y=`Revenue After Merchant Cut`, color = Category, fill = Category)) +
   geom_bar(stat="identity") + coord_flip() + theme(legend.background = element_rect(fill="lightblue",
                                                                                     size=0.2, linetype="solid", 
                                                                                     colour ="darkblue")) + ggtitle("Revenue After Merchant Cut") + scale_y_continuous(labels = comma)
 
 #Revenue Plot 
-rev_plot <- product_purchases + ylab("Total of Prices in USD")
+rev_plot <- p + ylab("Total of Prices in USD")
 
 # Taking the Average By Cat For Merchant Cut and Plan 
 analysis_df <- left_join(analysis_df, analysis_df %>% group_by(storetype) %>% summarise(average_cut = mean(merchantcut))) 
@@ -298,11 +292,11 @@ Total_Spend_By_Cat <- aggregate(no_warranty_analysis$average_net_rev, list(no_wa
 colnames(Total_Spend_By_Cat) <- c("Category", "Expected Potential Revenue")
 Total_Spend_By_Cat$`Sum of Produce Purchases` <- Total_Spend_By_Cat$`Expected Potential Revenue` %>% as.integer()
 
-product_purchases <- ggplot(data=Total_Spend_By_Cat, aes(x= Category, y=`Sum of Produce Purchases`, color = Category, fill = Category)) +
+p <- ggplot(data=Total_Spend_By_Cat, aes(x= Category, y=`Sum of Produce Purchases`, color = Category, fill = Category)) +
   geom_bar(stat="identity") + coord_flip() + theme(legend.background = element_rect(fill="lightblue",
                                                                                     size=0.2, linetype="solid", 
                                                                                     colour ="darkblue")) + ggtitle("Average Potential Revenue") + scale_y_continuous(labels = comma)
-expected_rev_plot <- product_purchases + ylab("Total of Prices in USD")
+expected_rev_plot <- p + ylab("Total of Prices in USD")
 
 #Patchwork plot
 combined_rev <- rev_plot/ expected_rev_plot
