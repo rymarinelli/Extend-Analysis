@@ -1,6 +1,6 @@
 
 #Install packages if not installed 
-pkg <- c("car","tidyverse", "lubridate", "gt", "glue", "broom", "scales", "RSQLite")
+pkg <- c("car","tidyverse", "lubridate", "gt", "glue", "broom", "scales", "RSQLite", "patchwork")
 new.pkg <- pkg[!(pkg %in% installed.packages())]
 if (length(new.pkg)) {
   install.packages(new.pkg,dependencies=T)
@@ -22,6 +22,9 @@ library(broom)
 library(scales)
 #SQLite in R
 library(RSQLite)
+
+#Composing Plots 
+library(patchwork)
 
 #
 # Note on R syntax For Python Users
@@ -334,7 +337,7 @@ analysis_df$warranty_sale_made <- analysis_df$warranty_sale_made %>% as.numeric(
 analysis_df <- fastDummies::dummy_cols(analysis_df, select_columns = "storetype", remove_first_dummy = T)
 
 model.1 <- lm(warranty_sale_made ~ storetype + merchantcut, data = analysis_df)
-summary(model)
+summary(model.1)
 
 #Calculates Variance Inflation Factor for Multicolinearity 
 Vif.1 <- car::vif(model.1)
@@ -347,6 +350,4 @@ vif.2 <- car::vif(model.2)
 
 
 table <- broom::tidy(model.2) %>% gt::gt()
-
-
 
