@@ -1,3 +1,11 @@
+#Install packages if not installed 
+pkg <- c("glue", "readr", "magrittr")
+new.pkg <- pkg[!(pkg %in% installed.packages())]
+if (length(new.pkg)) {
+  install.packages(new.pkg,dependencies=T)
+}
+
+
 library(magrittr)
 library(glue)
 library(readr)
