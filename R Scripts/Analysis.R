@@ -1,18 +1,33 @@
 
 #Install packages if not installed 
-pkg <- c("car","tidyverse", "lubridate", "gt", "glue", "broom", "scales")
+pkg <- c("car","tidyverse", "lubridate", "gt", "glue", "broom", "scales", "RSQLite")
 new.pkg <- pkg[!(pkg %in% installed.packages())]
 if (length(new.pkg)) {
   install.packages(new.pkg,dependencies=T)
 }
 
+#Used to get VIF 
 library(car)
+#Data Manipulation Package
 library(tidyverse)
+#Time/Date Package
 library(lubridate)
+#Used For Making Tables
 library(gt)
+#String Interpolation Package
 library(glue)
+#Gets data from tables and puts into format gt package can use
 library(broom)
+#formats percents and axises in graphs 
 library(scales)
+#SQLite in R
+library(RSQLite)
+
+#
+# Note on R syntax For Python Users
+# %>%  operator is the pipe operator and takes the preceding objects as the first arugment in the function 
+# ` ` or $ operators are both selectors and can extract data from dataframes. The ` ` method is from the tidyverse and $ is from base R. 
+#
 
 # Goal of Analysis
 # Calculate attach rate overall and by merchant per month on a unit and dollar basis. Pick
